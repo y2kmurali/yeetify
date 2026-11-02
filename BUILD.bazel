@@ -1,0 +1,98 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
+
+cc_library(
+    name = "libclang",
+    hdrs = glob(["third_party/llvm/include/clang-c/*.h"]),
+    includes = ["third_party/llvm/include"],
+    linkopts = ["-lclang"],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "tokenizer",
+    srcs = ["src/tokenizer.cpp"],
+    hdrs = ["src/tokenizer.h"],
+    deps = [":libclang"],
+    visibility = ["//visibility:public"],
+)
+
+cc_test(
+    name = "tokenizer_test",
+    srcs = ["tests/tokenizer_test.cpp"],
+    deps = [
+        ":tokenizer",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "yeet_generator",
+    srcs = ["src/yeet_generator.cpp"],
+    hdrs = ["src/yeet_generator.h"],
+    visibility = ["//visibility:public"],
+)
+
+cc_test(
+    name = "yeet_generator_test",
+    srcs = ["tests/yeet_generator_test.cpp"],
+    deps = [
+        ":yeet_generator",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "transformer",
+    srcs = ["src/transformer.cpp"],
+    hdrs = ["src/transformer.h"],
+    deps = [
+        ":tokenizer",
+        ":yeet_generator",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_test(
+    name = "transformer_test",
+    srcs = ["tests/transformer_test.cpp"],
+    deps = [
+        ":transformer",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "integration_test",
+    srcs = ["tests/integration_test.cpp"],
+    tags = ["local"],
+    deps = [
+        ":transformer",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "realworld_codebase_test",
+    srcs = ["tests/realworld_codebase_test.cpp"],
+    data = [
+        "tests/testdata/sha256_benchmark.cpp",
+        "tests/testdata/tinyraytracer.cpp",
+    ],
+    tags = ["local"],
+    deps = [
+        ":transformer",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_binary(
+    name = "yeetify",
+    srcs = ["src/main.cpp"],
+    deps = [":transformer"],
+    visibility = ["//visibility:public"],
+)
