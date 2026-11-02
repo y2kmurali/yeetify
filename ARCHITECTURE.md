@@ -165,10 +165,12 @@ flowchart LR
         Gen --> YT[":yeet_generator_test"]
         Trans --> TRT[":transformer_test"]
         Trans --> IT[":integration_test"]
+        Trans --> RWT[":realworld_codebase_test"]
         GTest --> TT
         GTest --> YT
         GTest --> TRT
         GTest --> IT
+        GTest --> RWT
     end
 ```
 
@@ -179,3 +181,6 @@ flowchart LR
   * `//:transformer_test`: Directive placement, mapping integrity, macro output syntax.
 * **Integration Tests**:
   * `//:integration_test`: End-to-end integration test that takes C++ programs, yeetifies them, invokes the host `clang++` compiler on the output, executes the generated binary, and verifies exit code and stdout.
+  * `//:realworld_codebase_test`: End-to-end verification against real-world open-source C++ codebases:
+    * **TinyRaytracer**: 3D raytracer with vector algebra, operator overloading, structured bindings, reflection/refraction physics, rendering a 2.3MB binary image verified **byte-for-byte identical**.
+    * **SHA-256 Benchmark**: Cryptographic hash algorithm with bit-manipulation and large constant tables, verified **hash-for-hash identical**.

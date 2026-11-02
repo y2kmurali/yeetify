@@ -75,6 +75,21 @@ cc_test(
     ],
 )
 
+cc_test(
+    name = "realworld_codebase_test",
+    srcs = ["tests/realworld_codebase_test.cpp"],
+    data = [
+        "tests/testdata/sha256_benchmark.cpp",
+        "tests/testdata/tinyraytracer.cpp",
+    ],
+    tags = ["local"],
+    deps = [
+        ":transformer",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
 cc_binary(
     name = "yeetify",
     srcs = ["src/main.cpp"],
