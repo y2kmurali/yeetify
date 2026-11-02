@@ -3,14 +3,39 @@ Yeetify is a humorous utility meant to turn the entirety of your C or C++ code i
 
 Inspired by [this reddit post](https://www.reddit.com/r/ProgrammerHumor/comments/bgdxwn/yeet/).
 
-## Installation
-First, the executable must be built, which can be done by simply calling `g++ yeetify.cpp -o yeetify`. Once you compile, make sure to move the executable to your PATH.
+## Installation & Building
+
+### Prerequisites
+* [Bazel](https://bazel.build/) (or [Bazelisk](https://github.com/bazelbuild/bazelisk)): `brew install bazelisk`
+* LLVM (`libclang`): `brew install llvm`
+
+### Building
+To build the `yeetify` binary:
+```bash
+bazel build //:yeetify
+```
+The executable will be located at `bazel-bin/yeetify`.
+
+### Testing
+Run the complete test suite (unit tests and end-to-end compilation tests with GoogleTest):
+```bash
+bazel test //...
+```
 
 ## Usage
-To use yeetify, simply call `yeetify file_path`, as long as the path is to a .c, .cc, or.cpp file. This will work best if the file has spaces between each individual token (e.g. brackets, operators, keywords, etc.), but will still work as long as there are no multiple-word quotes. 
+Simply invoke:
+```bash
+./bazel-bin/yeetify <source_file> [-o <output_file>] [--seed <number>]
+```
+* Supports `.c`, `.cc`, `.cpp`, `.cxx`, `.h`, and `.hpp` files.
+* Tokenization is powered by **`libclang`**, so standard C/C++ code is supported without requiring spaces between operators/delimiters, and multi-word string literals or comments work seamlessly out of the box.
 
 ## How it works
-The program iterates line-by-line, ignoring all `using`, `#define` or `#include` macros. It takes in each unique word/token and pairs it with a randomly generated permutation of the word 'yeet'. It then makes a copy of the original file and replaces each word with its counterpart (again, ignoring all directives).
+The program leverages `libclang` to parse and tokenize the source file according to standard C/C++ lexing grammar:
+1. **Preprocessor Directives**: Preserves top-level `#include`, `#define`, `#pragma`, and multiline directives as-is.
+2. **Tokenization**: Replaces code tokens (identifiers, keywords, literals including strings with spaces, operators, and punctuation) with unique permutations of the word `'yeet'`.
+3. **Macro Definitions**: Emits `#define <yeet_ident> <original_token>` directives right after the preserved directives.
+4. **Code Body**: Reconstructs the program body replacing each token with its yeet counterpart, preserving line breaks. The resulting code compiles cleanly with `clang++` or `g++`.
 
 ## Sample Usage
 Just like the inspiration, assume a file called `foo.cpp` that contains the following code:
