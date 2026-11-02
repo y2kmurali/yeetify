@@ -37,6 +37,8 @@ The program leverages `libclang` to parse and tokenize the source file according
 3. **Macro Definitions**: Emits `#define <yeet_ident> <original_token>` directives right after the preserved directives.
 4. **Code Body**: Reconstructs the program body replacing each token with its yeet counterpart, preserving line breaks. The resulting code compiles cleanly with `clang++` or `g++`.
 
+For an in-depth breakdown of the component design, lifecycle sequence, and preprocessor expansion invariants, see [ARCHITECTURE.md](file:///Users/zjweiss/Documents/GitHub/yeetify/ARCHITECTURE.md).
+
 ## Sample Usage
 Just like the inspiration, assume a file called `foo.cpp` that contains the following code:
 
